@@ -42,6 +42,14 @@ public class ProductService {
         Product newOne = this.repository.save(product);
         return  newOne;
     }
+    public Product decreaseQuantity(Product product)
+    {
+
+//        Product product = this.repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product not found with id"));
+        product.setQuantity(product.getQuantity() - 1) ;
+        Product newOne = this.repository.save(product);
+        return  newOne;
+    }
     public List<Product> getAll()
     {
         return  this.repository.findAll();

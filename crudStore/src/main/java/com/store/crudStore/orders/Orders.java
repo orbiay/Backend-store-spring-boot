@@ -14,11 +14,11 @@ public class Orders {
     @JoinColumn(name = "customerId")
     private Customer customer; // This field is what establishes the relationship between an Order and a Customer.
 
-    @ManyToOne
-    @JoinColumn(name = "productId")
-    private Product product;
-
     public Orders() {
+    }
+
+    public Orders(Customer customer) {
+        this.customer = customer;
     }
 
     public Long getId() {
@@ -30,4 +30,11 @@ public class Orders {
     }
 
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 }
