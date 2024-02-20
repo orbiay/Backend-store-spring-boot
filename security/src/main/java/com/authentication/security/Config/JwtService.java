@@ -18,14 +18,14 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class JwtService {
-    private static  String SECRET_KEY = "MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEA0eZekL5vIkbUiB4DeCLhiqC1mG5uOfLU/IPno3SfuLQmsIMGcLYQVjSl7QKKufeMxMhtLwe7dIj6S9yoYlX89QIDAQABAkEArjLYTJwfM31BKW5vRqb8M8bIrycHB8TGioMWHQvO+sPXh4e0vusaIj3VJgIwr/U65G3riifsetENSm5qa7YHyQIhAOof9n64K9zlg6mek/GBm386zlcHGeJP/fvWlHfq5mhfAiEA5YL4B+4CW/foLgUQ/Mk2/1OBsCamwSdXSP8idL31qysCIH/RMV5fJ7syJh49L+Gic4UTUsEaZFw0daG+tVF+kYmbAiAg/Ei/gwKNyzxwWMQPQLAJ1CugcH2o5wmRcTG3i5GiTwIhAKJ9x+A+2Fw2ycyF/QO8PjKortNTlZY7jNJvfvQw0RF7";
+    public static  String SECRET_KEY = "MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEA0eZekL5vIkbUiB4DeCLhiqC1mG5uOfLU/IPno3SfuLQmsIMGcLYQVjSl7QKKufeMxMhtLwe7dIj6S9yoYlX89QIDAQABAkEArjLYTJwfM31BKW5vRqb8M8bIrycHB8TGioMWHQvO+sPXh4e0vusaIj3VJgIwr/U65G3riifsetENSm5qa7YHyQIhAOof9n64K9zlg6mek/GBm386zlcHGeJP/fvWlHfq5mhfAiEA5YL4B+4CW/foLgUQ/Mk2/1OBsCamwSdXSP8idL31qysCIH/RMV5fJ7syJh49L+Gic4UTUsEaZFw0daG+tVF+kYmbAiAg/Ei/gwKNyzxwWMQPQLAJ1CugcH2o5wmRcTG3i5GiTwIhAKJ9x+A+2Fw2ycyF/QO8PjKortNTlZY7jNJvfvQw0RF7";
     public String extractUsername(String jwt) {
         return extractClaim(jwt,Claims::getSubject);
     }
     private Claims extractAllClaims(String jwt)
     {
         return Jwts.parserBuilder()
-                .setSigningKey(getSignInJey())
+                .setSigningKey(SECRET_KEY)
                 .build()
                 .parseClaimsJws(jwt)
                 .getBody();
@@ -35,11 +35,7 @@ public class JwtService {
         final Claims claims = extractAllClaims(jwt);
         return claimsResolver.apply(claims);
     }
-    private Key getSignInJey() {
-//        String cleanedSecretKey = SECRET_KEY.replaceAll("[^A-Za-z0-9+/=]", "");
-        byte[] keybytes = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(keybytes);
-    }
+
     public String generateToken(UserDetails userdetails)
     {
         return this.generateToken(new HashMap<>(),userdetails);
