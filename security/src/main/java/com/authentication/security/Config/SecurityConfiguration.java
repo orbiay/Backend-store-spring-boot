@@ -41,7 +41,6 @@ public class SecurityConfiguration {
                         .expiredUrl("/login?expired")
                     .and()
                 .and()
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin(Customizer.withDefaults())
                 .logout()
