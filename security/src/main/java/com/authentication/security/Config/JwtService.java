@@ -22,7 +22,7 @@ public class JwtService {
     public String extractUsername(String jwt) {
         return extractClaim(jwt,Claims::getSubject);
     }
-    private Claims extractAllClaims(String jwt)
+    public Claims extractAllClaims(String jwt)
     {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY)
@@ -42,7 +42,8 @@ public class JwtService {
     }
     public  String generateToken(Map<String, Objects> extraClaims , UserDetails userdetails)
     {
-        long expirationTimeMillis = System.currentTimeMillis() + (1000 * 60 * 24);
+        System.out.println(extraClaims.get("firstname") );
+        long expirationTimeMillis = System.currentTimeMillis() + (1000 * 60 );
         return  Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userdetails.getUsername())
@@ -57,11 +58,11 @@ public class JwtService {
         return (email.equals(userdetails.getUsername()) && !isTokenExpired(jwt));
     }
 
-    private boolean isTokenExpired(String jwt) {
+    public boolean isTokenExpired(String jwt) {
         return  extractExpiration(jwt).before(new Date());
     }
 
-    private Date extractExpiration(String jwt) {
+    public Date extractExpiration(String jwt) {
         return  extractClaim(jwt,Claims::getExpiration);
     }
 }

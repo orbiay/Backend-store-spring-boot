@@ -14,9 +14,16 @@ public class user implements UserDetails {
     @Id
     @GeneratedValue
     private long id;
+    @Column(unique = false,nullable = false)
     private String firstname;
+    @Column(unique = false,nullable = false)
+
     private String lastname;
+    @Column(unique = true,nullable = false)
+
     private String email;
+    @Column(unique = false,nullable = false)
+
     private String password;
 
     public Role getRole() {

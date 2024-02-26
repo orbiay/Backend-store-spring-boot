@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.plaf.PanelUI;
+import java.util.HashMap;
 
 @Service
 @AllArgsConstructor
@@ -22,20 +23,26 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-//    private final AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
     public AuthenticationResponse register(RegisterRequest request)
     {
         System.out.println(request.getPassword());
         user user = new user(request.getFirstname(),request.getLastname(),request.getEmail(),passwordEncoder.encode(request.getPassword()), Role.USER);
+        HashMap hm = new HashMap();
+        hm.put("Roles",user.getAuthorities());
+        hm.put("firstname",user.getFirstname());
         userRepository.save(user);
-        var jwtToken = this.jwtService.generateToken(user);
+        var jwtToken = this.jwtService.generateToken(hm,user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
     public AuthenticationResponse authenticate(AuthenticationRequest request)
     {
-//        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken((request.getEmail()),request.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken((request.getEmail()),request.getPassword()));
         user user = this.userRepository.findByEmail(request.getEmail()).orElseThrow();
-        var jwtToken = this.jwtService.generateToken(user);
+        HashMap hm = new HashMap();
+        hm.put("Roles",user.getAuthorities());
+        hm.put("firstname",user.getFirstname());
+        var jwtToken = this.jwtService.generateToken(hm,user);
         return AuthenticationResponse.builder().token(jwtToken).build();
     }
 }

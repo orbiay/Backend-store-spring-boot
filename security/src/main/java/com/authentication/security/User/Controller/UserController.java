@@ -24,7 +24,6 @@ public class UserController {
         try{
             return ResponseEntity.ok( this.userService.register(request));
         }catch (Exception err){}
-//        return ResponseEntity.ok("hell");
         return null;
     }
     @PostMapping("/authenticate")
