@@ -43,7 +43,7 @@ public class JwtService {
     public  String generateToken(Map<String, Objects> extraClaims , UserDetails userdetails)
     {
         System.out.println(extraClaims.get("firstname") );
-        long expirationTimeMillis = System.currentTimeMillis() + (1000 * 60 );
+        long expirationTimeMillis = System.currentTimeMillis() + (1000 * 60);
         return  Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(userdetails.getUsername())

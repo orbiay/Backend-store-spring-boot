@@ -33,37 +33,8 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         try {
 
-
-            final String authHeader = request.getHeader("Authorization");
-            String jwt = null;
-            final String email;
-            Cookie[] cookies = request.getCookies();
-            for (Cookie cookie : cookies)
-                if (cookie.getName().equals("JWT_TOKEN"))
-                    jwt = cookie.getValue();
-            if (jwt != null) {
-                System.out.println(jwt);
-                if (this.jwtService.isTokenExpired(jwt)) {
-
-                    email = this.jwtService.extractUsername(jwt);
-                    if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                        UserDetails userdetails = this.userDetailsService.loadUserByUsername(email);
-                        if (this.jwtService.isTokenValid(jwt, userdetails)) {
-                            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(  // for creating a Token
-                                    userdetails,
-                                    null,
-                                    userdetails.getAuthorities()
-                            );
-                            authToken.setDetails(
-                                    new WebAuthenticationDetailsSource().buildDetails(request)
-                            );
-                            SecurityContextHolder.getContext().setAuthentication(authToken);
-                            System.out.println("Hello = >" + authToken);//This means that the user represented by the authToken object is authenticated, and their authorities (e.g., roles and permissions) are available for use by Spring Security.
-                        }
-                    }
-                }
-            } else if (request.getParameter("username") != null && request.getParameter("password") != null) {
-                System.out.println("Hello From Local Strategy Login");
+            if (request.getParameter("username") != null && request.getParameter("password") != null) {
+                System.out.println("--------------------> Local Strategy Login <-----------------------------");
                 UserDetails userdetails = this.userDetailsService.loadUserByUsername(request.getParameter("username"));
                 System.out.println(userdetails.getUsername());
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(  // for creating a Token
@@ -82,9 +53,41 @@ public class AuthenticationFilter extends OncePerRequestFilter {
                 cookie.setPath("/");
                 response.addCookie(cookie);
             }
+
+            final String authHeader = request.getHeader("Authorization");
+            String jwt = null;
+            String email;
+            Cookie[] cookies = request.getCookies();
+            for (Cookie cookie : cookies)
+                if (cookie.getName().equals("JWT_TOKEN"))
+                    jwt = cookie.getValue();
+            System.out.println("JWT == "+ jwt);
+            if (jwt != null) {
+                System.out.println("----------------- > JWT TOKEN STRATEGY <-----------------------");
+                if (!this.jwtService.isTokenExpired(jwt)) {
+                    email = this.jwtService.extractUsername(jwt);
+                    if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                        UserDetails userdetails = this.userDetailsService.loadUserByUsername(email);
+                        if (this.jwtService.isTokenValid(jwt, userdetails)) {
+                            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(  // for creating a Token
+                                    userdetails,
+                                    null,
+                                    userdetails.getAuthorities()
+                            );
+                            authToken.setDetails(
+                                    new WebAuthenticationDetailsSource().buildDetails(request)
+                            );
+                            SecurityContextHolder.getContext().setAuthentication(authToken);
+                            System.out.println("Hello = >" + authToken);//This means that the user represented by the authToken object is authenticated, and their authorities (e.g., roles and permissions) are available for use by Spring Security.
+                        }
+                    }
+                }
+            }
+
             filterChain.doFilter(request, response);
         }catch (Exception err)
         {
+            System.out.println("-------------------> An Exception Caught <-------------------------");
             System.out.println(err.getMessage());
             HttpSession session = request.getSession(false);
             if (session != null) {
