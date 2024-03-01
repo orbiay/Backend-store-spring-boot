@@ -8,6 +8,7 @@ class SecurityApplicationTests {
 
 	@Test
 	void contextLoads() {
+        System.out.println("Hello From Here");
 	}
 
 }

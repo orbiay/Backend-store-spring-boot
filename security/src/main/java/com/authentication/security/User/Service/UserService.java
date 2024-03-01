@@ -37,7 +37,6 @@ public class UserService {
     }
     public AuthenticationResponse authenticate(AuthenticationRequest request)
     {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken((request.getEmail()),request.getPassword()));
         user user = this.userRepository.findByEmail(request.getEmail()).orElseThrow();
         HashMap hm = new HashMap();
         hm.put("Roles",user.getAuthorities());
